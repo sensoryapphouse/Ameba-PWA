@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<title>iMeba lava effects</title>
+<link rel="stylesheet" href="css/index.css">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="favicon.ico" type="image/x-icon" />
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<script type="text/javascript" src="glMatrix-0.9.5.min.js"></script>
+<script type="text/javascript" src="webgl-utils.js"></script>
+<script type="text/javascript" src="main.js"></script>
+<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
+    
+<script id="shader-1-fs" type="f">
+    precision highp float;
+    varying vec2 vTextureCoord;
+    uniform sampler2D uSampler;
+    uniform vec2 resolution;
+    uniform vec2 mouse;
+    uniform int index;
+    uniform float time;
+    uniform float Param1;
+    uniform float Param2;
+    uniform float Param3;
+
+float snoise(vec3 uv, float res)
+{
+	const vec3 s = vec3(1e0, 1e2, 1e4);
+
+	uv *= res;
+
+	vec3 uv0 = floor(mod(uv, res))*s;
+	vec3 uv1 = floor(mod(uv+vec3(1.), res))*s;
+
+	vec3 f = fract(uv); f = f*f*(3.0-2.0*f);
+
+	vec4 v = vec4(uv0.x+uv0.y+uv0.z, uv1.x+uv0.y+uv0.z,
+		      	  uv0.x+uv1.y+uv0.z, uv1.x+uv1.y+uv0.z);
+
+	vec4 r = fract(sin(v*1e-3)*1e5);
+	float r0 = mix(mix(r.x, r.y, f.x), mix(r.z, r.w, f.x), f.y);
+
+	r = fract(sin((v + uv1.z - uv0.z)*1e-3)*1e5);
+	float r1 = mix(mix(r.x, r.y, f.x), mix(r.z, r.w, f.x), f.y);
+   float size = 1.6;
+   if (index > 0)
+  	   size = 1.0;
+	return mix(r0, r1, f.z)*size-.6;
+}
+
+void main(void)
+{
+	vec2 p = gl_FragCoord.xy / resolution.xy;
+	vec2 m = mouse;
+	float t = time*0.05; // .05 & .5
+	if (Param2 == 1.0)
+		t*=10.0;
+	float style = 0.3; // 1.1 & .3
+	if (Param1 == 1.0)
+		style = 1.1;
+	if (index > 0) {
+	  if (p.x < 0.5)
+		  p.x = 1.0-p.x;
+	  if (m.x < 0.5)
+		  m.x=1.0-m.x;
+	  if (index == 2) {
+	  	 if (p.y < 0.5)
+		   p.y = 1.0-p.y;
+	    if (m.y < 0.5)
+		   m.y = 1.0-m.y;
+	   }
+   }
+	p-=m;
+
+	p.x *= resolution.x/resolution.y;
+
+	float color = 2.8 - (5.*length(2.*p));
+
+	vec3 coord = vec3(atan(p.x,p.y)/6.2832+.8, length(p)*style, .3);
+
+	float power = 4.0;
+	color += (8.0 / power) * snoise(coord + vec3(0.,-t, t), power*2.);
+	vec3 col =  vec3( color, pow(max(color,0.),2.)*0.8, 0.3-pow(max(color,0.),3.)*0.35);
+	if (Param3 == 0.0)
+	  gl_FragColor = vec4(col, 1.0);
+	else if (Param3 == 1.0)
+	  gl_FragColor = vec4(col.zxy, 1.0);
+	else if (Param3 == 2.0)
+	  gl_FragColor = vec4(col.yxz, 1.0);
+	else if (Param3 == 3.0)
+	  gl_FragColor = vec4(col.xzy, 1.0);
+	else if (Param3 == 4.0)
+	  gl_FragColor = vec4(col.zyx, 1.0);
+}
+
+</script>
+
+
+<script id="shader-vs" type="v">
+    attribute vec3 aVertexPosition;
+    attribute vec2 aTextureCoord;
+
+    uniform mat4 uMVMatrix;
+    uniform mat4 uPMatrix;
+
+    varying vec2 vTextureCoord;
+
+    void main(void) {
+        gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
+        vTextureCoord = aTextureCoord;
+    }
+</script>
+
+</head>
+<body>
+<div id="container">
+  <div id="main">
+    <canvas id="webgl-canvas"  style="border: none;" width="500" height="500"></canvas>
+    <splash class = "btn" enabled></splash>
+    <button class="btn" enabled></button>
+    <button1 class="btn" enabled></button1>
+    <button2 class="btn" enabled></button2>
+    <button3 class="btn" enabled></button3>
+    <audio id="audio" autobuffer="autobuffer" preload="auto">
+    <source src="ameba.mp3" type="audio/mp3" />
+    <audio id="audio1" autobuffer="autobuffer" preload="auto">
+    <source src="ameba1.mp3" type="audio/mp3" />
+    <audio id="audio2" autobuffer="autobuffer" preload="auto">
+    <source src="ameba2.mp3" type="audio/mp3" />
+    </div>
+  </div>
+</body>
+</html>
