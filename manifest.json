@@ -1,28 +1,28 @@
 {
-  "name": "Ameba PWA",
-  "short_name": "Ameba",
+  "name": "iMeba PWA",
+  "short_name": "iMeba",
   "icons": [{
-    "src": "images/ameba-128.png",
+    "src": "images/imeba-128.png",
       "sizes": "128x128",
       "type": "image/png"
     }, {
-      "src": "images/ameba-144.png",
+      "src": "images/imeba-144.png",
       "sizes": "144x144",
       "type": "image/png"
     }, {
-      "src": "images/ameba-152.png",
+      "src": "images/imeba-152.png",
       "sizes": "152x152",
       "type": "image/png"
     }, {
-      "src": "images/ameba-192.png",
+      "src": "images/imeba-192.png",
       "sizes": "192x192",
       "type": "image/png"
     }, {
-      "src": "images/ameba-256.png",
+      "src": "images/imeba-256.png",
       "sizes": "256x256",
       "type": "image/png"
     }, {
-      "src": "images/ameba-512.png",
+      "src": "images/imeba-512.png",
       "sizes": "512x512",
       "type": "image/png"
     }],
